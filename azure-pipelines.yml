@@ -18,7 +18,7 @@ steps:
     azureSubscription: 'MS Internal Subscription'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'init.sh'
+    inlineScript: './init.sh'
     workingDirectory: 'cluster1'
 - task: AzureCLI@2
   inputs:
