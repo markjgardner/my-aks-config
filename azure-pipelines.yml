@@ -1,0 +1,27 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- azure-pipelines
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+- group: 'terraformBackendConfig'
+
+steps:
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'MS Internal Subscription'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'cluster1/init.sh'
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'MS Internal Subscription'
+    scriptType: 'bash'
+    scriptLocation: 'inlineScript'
+    inlineScript: 'terraform plan'
