@@ -18,10 +18,12 @@ steps:
     azureSubscription: 'MS Internal Subscription'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
-    inlineScript: 'cluster1/init.sh'
+    inlineScript: 'init.sh'
+    workingDirectory: 'cluster1'
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'MS Internal Subscription'
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: 'terraform plan'
+    workingDirectory: 'cluster1'
