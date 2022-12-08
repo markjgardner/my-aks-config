@@ -42,6 +42,10 @@ ARG TERRAGRUNT_VERSION=0.28.1
 RUN bash /tmp/library-scripts/terraform-debian.sh "${TERRAFORM_VERSION}" "${TFLINT_VERSION}" "${TERRAGRUNT_VERSION}" \
     && rm -rf /tmp/library-scripts
 
+# Copy SSH key into container
+RUN mkdir /home/vscode/.ssh \
+    && echo '${localEnv.SSH_KEY}' > /home/vscode/.ssh/id_rsa \
+    && echo '${localEnv.SSH_KEY_PUB' > /home/vscode/.ssh/id_rsa.pub
 
 ENTRYPOINT [ "/usr/local/share/docker-init.sh" ]
 CMD [ "sleep", "infinity" ]
