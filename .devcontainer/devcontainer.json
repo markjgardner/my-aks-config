@@ -19,5 +19,6 @@
 			]
 		}
 	},
-	"runArgs": ["--env-file",".devcontainer/devcontainer.env"]
+	"runArgs": ["--env-file",".devcontainer/devcontainer.env"],
+	"postCreateCommand": "echo \"alias tf=terraform\nalias k=kubectl\" >> /home/codespace/.bash_aliases"
 }
