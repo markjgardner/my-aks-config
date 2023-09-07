@@ -1,0 +1,23 @@
+{
+	"image": "mcr.microsoft.com/devcontainers/universal:2",
+	"features": {
+		"ghcr.io/devcontainers/features/azure-cli:1": {
+			"version": "latest"
+		},
+		"ghcr.io/devcontainers/features/terraform:1": {}
+	},
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"github.copilot",
+        		"github.copilot-chat",
+				"ms-kubernetes-tools.vscode-kubernetes-tools",
+				"ms-azuretools.vscode-azureterraform",
+				"hashicorp.terraform"
+			]
+		}
+	},
+	"runArgs": ["--env-file",".devcontainer/devcontainer.env"]
+}
