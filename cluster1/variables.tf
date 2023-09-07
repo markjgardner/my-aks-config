@@ -6,15 +6,14 @@ variable "Region" {
     description = "The region to deploy resources into"
 }
 
-variable "AdminUser" {
+variable "ADMINUSER" {
     description = "Username for admin account on all nodes"
 }
 
-variable "LinuxSSHKey" {
+variable "SSHKEY" {
     description = "Path to the public key to associate with the admin account on linux nodes"
-    default = "~/.ssh/id_rsa.pub"
 }
 
-variable "WindowsAdminPassword" {
+variable "WINDOWSADMINPASSWORD" {
     description = "Password to use for the admin account on windows nodes"
 }
