@@ -25,6 +25,7 @@ resource "azurerm_subnet" "subnet-system" {
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["10.0.0.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
 }
 
 resource "azurerm_subnet" "subnet-win19" {
@@ -32,6 +33,7 @@ resource "azurerm_subnet" "subnet-win19" {
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["10.0.1.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
 }
 
 resource "azurerm_subnet" "subnet-win22" {
@@ -39,6 +41,15 @@ resource "azurerm_subnet" "subnet-win22" {
   resource_group_name = azurerm_resource_group.rg.name
   virtual_network_name = azurerm_virtual_network.vnet.name
   address_prefixes = ["10.0.2.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
+}
+
+resource "azurerm_subnet" "subnet-linux" {
+  name = "aks-linux"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.3.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
 }
 
 resource "azurerm_kubernetes_cluster" "cluster" {
@@ -48,12 +59,17 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   dns_prefix          = "${var.BaseName}aks"
   automatic_channel_upgrade = "rapid"
   node_os_channel_upgrade = "NodeImage"
+  azure_policy_enabled = true
 
   linux_profile {
     admin_username = var.ADMINUSER
     ssh_key {
       key_data = var.SSHKEY
     }
+  }
+
+  lifecycle {
+    ignore_changes = [ microsoft_defender ]
   }
 
   windows_profile {
@@ -128,4 +144,29 @@ resource "azurerm_kubernetes_cluster_node_pool" "windows2022-pool" {
   }
 
   tags = {}
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "linux-pool" {
+  name = "linux"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
+  vm_size = "Standard_B4ms"
+  enable_auto_scaling = true
+  max_count = 3
+  min_count = 0
+  os_sku = "AzureLinux"
+  zones = []
+  node_taints = []
+  vnet_subnet_id = azurerm_subnet.subnet-win22.id
+
+  upgrade_settings {
+    max_surge = 1
+  }
+
+  tags = {}
+}
+
+resource "azurerm_kubernetes_cluster_extension" "dapr" {
+  name           = "dapr-ext"
+  cluster_id     = azurerm_kubernetes_cluster.cluster.id
+  extension_type = "Microsoft.Dapr"
 }
