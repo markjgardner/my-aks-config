@@ -52,6 +52,21 @@ resource "azurerm_subnet" "subnet-linux" {
   service_endpoints = [ "Microsoft.Storage" ]
 }
 
+resource "azurerm_subnet" "subnet-virtual" {
+  name = "aks-virtual"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.4.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
+  delegation {
+    name = "aciDelegation"
+    service_delegation {
+      name    = "Microsoft.ContainerInstance/containerGroups"
+      actions = ["Microsoft.Network/virtualNetworks/subnets/action"]
+    }
+  }
+}
+
 resource "azurerm_kubernetes_cluster" "cluster" {
   name                = "${var.BaseName}-aks"
   location            = azurerm_resource_group.rg.location
@@ -104,6 +119,17 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   auto_scaler_profile {
     expander = "least-waste"
   }
+
+  aci_connector_linux {
+    subnet_name = azurerm_subnet.subnet-virtual.name
+  }
+
+  oms_agent {
+    log_analytics_workspace_id = var.LogAnalyticsWorkspaceId
+    msi_auth_for_monitoring_enabled = true
+  }
+
+  monitor_metrics {}
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "windows2019-pool" {

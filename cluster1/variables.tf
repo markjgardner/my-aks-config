@@ -6,6 +6,10 @@ variable "Region" {
     description = "The region to deploy resources into"
 }
 
+variable "LogAnalyticsWorkspaceId" {
+    description = "The ID of the Log Analytics workspace to use for cluster logging"
+}
+
 variable "ADMINUSER" {
     description = "Username for admin account on all nodes"
 }
