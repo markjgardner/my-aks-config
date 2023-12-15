@@ -106,6 +106,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
     max_count = 5
     min_count = 1
     vnet_subnet_id = azurerm_subnet.subnet-system.id
+    only_critical_addons_enabled = true
 
     upgrade_settings {
       max_surge = 1
