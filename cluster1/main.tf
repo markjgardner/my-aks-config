@@ -75,6 +75,8 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   automatic_channel_upgrade = "rapid"
   node_os_channel_upgrade = "NodeImage"
   azure_policy_enabled = true
+  workload_identity_enabled = true
+  oidc_issuer_enabled = true
 
   linux_profile {
     admin_username = var.ADMINUSER
@@ -131,6 +133,10 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   monitor_metrics {}
+  
+  key_vault_secrets_provider {
+    secret_rotation_enabled = true
+  }
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "windows2019-pool" {
