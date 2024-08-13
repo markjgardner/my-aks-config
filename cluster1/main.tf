@@ -28,30 +28,6 @@ resource "azurerm_subnet" "subnet-system" {
   service_endpoints = [ "Microsoft.Storage" ]
 }
 
-resource "azurerm_subnet" "subnet-win19" {
-  name = "aks-win19"
-  resource_group_name = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes = ["10.0.1.0/24"]
-  service_endpoints = [ "Microsoft.Storage" ]
-}
-
-resource "azurerm_subnet" "subnet-win22" {
-  name = "aks-win22"
-  resource_group_name = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes = ["10.0.2.0/24"]
-  service_endpoints = [ "Microsoft.Storage" ]
-}
-
-resource "azurerm_subnet" "subnet-linux" {
-  name = "aks-linux"
-  resource_group_name = azurerm_resource_group.rg.name
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes = ["10.0.3.0/24"]
-  service_endpoints = [ "Microsoft.Storage" ]
-}
-
 resource "azurerm_subnet" "subnet-virtual" {
   name = "aks-virtual"
   resource_group_name = azurerm_resource_group.rg.name
@@ -139,6 +115,20 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 }
 
+resource "azurerm_kubernetes_cluster_extension" "dapr" {
+  name           = "dapr-ext"
+  cluster_id     = azurerm_kubernetes_cluster.cluster.id
+  extension_type = "Microsoft.Dapr"
+}
+
+resource "azurerm_subnet" "subnet-win19" {
+  name = "aks-win19"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.1.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
+}
+
 resource "azurerm_kubernetes_cluster_node_pool" "windows2019-pool" {
   name = "win19"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
@@ -157,6 +147,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "windows2019-pool" {
   }
 
   tags = {}
+}
+
+resource "azurerm_subnet" "subnet-win22" {
+  name = "aks-win22"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.2.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
 }
 
 resource "azurerm_kubernetes_cluster_node_pool" "windows2022-pool" {
@@ -179,6 +177,14 @@ resource "azurerm_kubernetes_cluster_node_pool" "windows2022-pool" {
   tags = {}
 }
 
+resource "azurerm_subnet" "subnet-linux" {
+  name = "aks-linux"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.3.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
+}
+
 resource "azurerm_kubernetes_cluster_node_pool" "linux-pool" {
   name = "linux"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
@@ -196,10 +202,4 @@ resource "azurerm_kubernetes_cluster_node_pool" "linux-pool" {
   }
 
   tags = {}
-}
-
-resource "azurerm_kubernetes_cluster_extension" "dapr" {
-  name           = "dapr-ext"
-  cluster_id     = azurerm_kubernetes_cluster.cluster.id
-  extension_type = "Microsoft.Dapr"
 }
