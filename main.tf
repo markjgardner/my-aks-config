@@ -48,8 +48,8 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   dns_prefix          = "${var.BaseName}aks"
-  automatic_channel_upgrade = "rapid"
-  node_os_channel_upgrade = "NodeImage"
+  automatic_upgrade_channel = "rapid"
+  node_os_upgrade_channel = "NodeImage"
   azure_policy_enabled = true
   workload_identity_enabled = true
   oidc_issuer_enabled = true
@@ -73,6 +73,9 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   network_profile {
     network_plugin = "azure"
     network_plugin_mode = "overlay"
+    #Cilium doesn't support windows nodes
+    #network_policy = "cilium"
+    #network_data_plane = "cilium"
     dns_service_ip = "10.0.32.10"
     service_cidr = "10.0.32.0/24"
   }
@@ -80,11 +83,12 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   default_node_pool {
     name       = "system"
     vm_size    = "Standard_B4ms"
-    enable_auto_scaling = true
+    auto_scaling_enabled = true
     max_count = 5
     min_count = 1
     vnet_subnet_id = azurerm_subnet.subnet-system.id
     only_critical_addons_enabled = true
+    os_sku = "AzureLinux"
 
     upgrade_settings {
       max_surge = 1
@@ -133,7 +137,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "windows2019-pool" {
   name = "win19"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
   vm_size = "Standard_B4ms"
-  enable_auto_scaling = true
+  auto_scaling_enabled = true
   max_count = 3
   min_count = 0
   os_type = "Windows"
@@ -161,7 +165,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "windows2022-pool" {
   name = "win22"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
   vm_size = "Standard_B4ms"
-  enable_auto_scaling = true
+  auto_scaling_enabled = true
   max_count = 3
   min_count = 0
   os_type = "Windows"
@@ -189,7 +193,7 @@ resource "azurerm_kubernetes_cluster_node_pool" "linux-pool" {
   name = "linux"
   kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
   vm_size = "Standard_B4ms"
-  enable_auto_scaling = true
+  auto_scaling_enabled = true
   max_count = 3
   min_count = 0
   os_sku = "AzureLinux"
