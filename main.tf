@@ -1,5 +1,6 @@
 terraform {
   backend "azurerm" {
+    use_azuread_auth = true
   }
 }
 
@@ -124,6 +125,12 @@ resource "azurerm_kubernetes_cluster_extension" "dapr" {
   cluster_id     = azurerm_kubernetes_cluster.cluster.id
   extension_type = "Microsoft.Dapr"
 }
+
+#resource "azurerm_kubernetes_cluster_extension" "acs" {
+#  name           = "acs-ext"
+#  cluster_id     = azurerm_kubernetes_cluster.cluster.id
+#  extension_type = "microsoft.azurecontainerstorage"
+#}
 
 resource "azurerm_subnet" "subnet-win19" {
   name = "aks-win19"
