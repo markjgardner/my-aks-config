@@ -54,6 +54,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   azure_policy_enabled = true
   workload_identity_enabled = true
   oidc_issuer_enabled = true
+  http_application_routing_enabled = true
 
   linux_profile {
     admin_username = var.ADMINUSER
