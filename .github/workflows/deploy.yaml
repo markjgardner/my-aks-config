@@ -8,6 +8,9 @@ on:
   push:
     branches: [ "main" ]
 
+permissions:
+  id-token: write # Require write permission to Fetch an OIDC token.
+
 jobs:
   plan:
     runs-on: ubuntu-latest
