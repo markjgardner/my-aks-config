@@ -10,8 +10,8 @@ provider "azurerm" {
 }
 
 resource "azurerm_resource_group" "rg" {
-  name     = "${var.BaseName}-rg"
-  location = var.Region
+  name     = "${var.BASENAME}-rg"
+  location = var.REGION
 }
 
 resource "azurerm_virtual_network" "vnet" {
@@ -45,10 +45,10 @@ resource "azurerm_subnet" "subnet-virtual" {
 }
 
 resource "azurerm_kubernetes_cluster" "cluster" {
-  name                = "${var.BaseName}-aks"
+  name                = "${var.BASENAME}-aks"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
-  dns_prefix          = "${var.BaseName}aks"
+  dns_prefix          = "${var.BASENAME}aks"
   automatic_upgrade_channel = "rapid"
   node_os_upgrade_channel = "NodeImage"
   azure_policy_enabled = true
@@ -110,7 +110,7 @@ resource "azurerm_kubernetes_cluster" "cluster" {
   }
 
   oms_agent {
-    log_analytics_workspace_id = var.LogAnalyticsWorkspaceId
+    log_analytics_workspace_id = var.LOGANALYTICSWORKSPACEID
     msi_auth_for_monitoring_enabled = true
   }
 

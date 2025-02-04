@@ -1,12 +1,12 @@
-variable "BaseName" {
+variable "BASENAME" {
     description = "The base name for all resources created by this template"  
 }
 
-variable "Region" {
+variable "REGION" {
     description = "The region to deploy resources into"
 }
 
-variable "LogAnalyticsWorkspaceId" {
+variable "LOGANALYTICSWORKSPACEID" {
     description = "The ID of the Log Analytics workspace to use for cluster logging"
 }
 
