@@ -1,9 +1,5 @@
 name: Deploy
 
-env:
-  TF_IN_AUTOMATION: "true"
-  TF_INPUT: "false"
-
 on:
   push:
     branches: [ "main" ]
@@ -12,10 +8,28 @@ on:
 permissions:
   id-token: write # Require write permission to Fetch an OIDC token.
 
+env:
+  ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+  ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+  ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+  ARM_USE_OIDC: "true"
+  TF_BACKEND_CONTAINER_NAME: ${{ vars.TF_BACKEND_CONTAINER_NAME }}
+  TF_BACKEND_KEY: ${{ vars.TF_BACKEND_KEY }}
+  TF_BACKEND_LOCATION: ${{ vars.TF_BACKEND_LOCATION }}
+  TF_BACKEND_RESOURCE_GROUP: ${{ vars.TF_BACKEND_RESOURCE_GROUP }}
+  TF_BACKEND_STORAGE_ACCOUNT: ${{ secrets.TF_BACKEND_STORAGE_ACCOUNT }}
+  TF_IN_AUTOMATION: "true"
+  TF_INPUT: "false"
+  TF_LOG: ${{ vars.TF_LOG }}
+  TF_VAR_ADMINUSER: ${{ secrets.TF_VAR_ADMINUSER }}
+  TF_VAR_SSHKEY: ${{ secrets.TF_VAR_SSHKEY }}
+  TF_VAR_WINDOWSADMINPASSWORD: ${{ secrets.TF_VAR_WINDOWSADMINPASSWORD }}
+
 jobs:
   plan:
     runs-on: ubuntu-latest
     steps:
+      - run: printenv
       - uses: actions/checkout@v2
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v1
