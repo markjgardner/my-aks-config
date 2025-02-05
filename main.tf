@@ -215,3 +215,31 @@ resource "azurerm_kubernetes_cluster_node_pool" "linux-pool" {
 
   tags = {}
 }
+
+resource "azurerm_subnet" "subnet-winannual" {
+  name = "aks-win22"
+  resource_group_name = azurerm_resource_group.rg.name
+  virtual_network_name = azurerm_virtual_network.vnet.name
+  address_prefixes = ["10.0.4.0/24"]
+  service_endpoints = [ "Microsoft.Storage" ]
+}
+
+resource "azurerm_kubernetes_cluster_node_pool" "windowsannual-pool" {
+  name = "winannual"
+  kubernetes_cluster_id = azurerm_kubernetes_cluster.cluster.id
+  vm_size = "Standard_B4ms"
+  auto_scaling_enabled = true
+  max_count = 3
+  min_count = 0
+  os_type = "Windows"
+  os_sku = "WindowsAnnual"
+  zones = []
+  node_taints = []
+  vnet_subnet_id = azurerm_subnet.subnet-win22.id
+
+  upgrade_settings {
+    max_surge = 1
+  }
+
+  tags = {}
+}
