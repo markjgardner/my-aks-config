@@ -243,3 +243,59 @@ resource "azurerm_kubernetes_cluster_node_pool" "windowsannual-pool" {
 
   tags = {}
 }
+
+resource "azurerm_network_security_group" "aks_nsg" {
+  name                = "${var.BASENAME}-aks-nsg"
+  location            = azurerm_resource_group.rg.location
+  resource_group_name = azurerm_resource_group.rg.name
+
+  security_rule {
+    name                       = "AllowKubernetesAPI"
+    priority                   = 100
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "443"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "AllowAllOutbound"
+    priority                   = 200
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "DenyAllInbound"
+    priority                   = 300
+    direction                  = "Inbound"
+    access                     = "Deny"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+}
+
+resource "azurerm_subnet_network_security_group_association" "aks_vnet_nsg_association" {
+  for_each = {
+    system = azurerm_subnet.subnet-system.id
+    virtual = azurerm_subnet.subnet-virtual.id
+    win19 = azurerm_subnet.subnet-win19.id
+    win22 = azurerm_subnet.subnet-win22.id
+    linux = azurerm_subnet.subnet-linux.id
+    winannual = azurerm_subnet.subnet-winannual.id
+  }
+
+  subnet_id                 = each.value
+  network_security_group_id = azurerm_network_security_group.aks_nsg.id
+}
